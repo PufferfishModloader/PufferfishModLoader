@@ -2,9 +2,9 @@
 <img src="https://i.imgur.com/oQF9mAd.png">
 </p>
 
-## A fast, light-weight, powerful mod loader for Minecraft
+## A fast, light-weight and powerful mod loader for Minecraft
 
-PufferfishModLoader is the next-level of Minecraft Modding. PML is designed to be light-weight, fast and developer-friendly.
+PufferfishModLoader is the next-level of Minecraft Modding. PML is designed to be light-weight, fast and powerful. (and of course, developer-friendly)
 
 ### I want to use PML, but I'm not sure about it... Why should I use it?
 Our goal is to provide users with a stable and light-weight mod loader which is also capable of handling tons of mods, without the performance impact.
