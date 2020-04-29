@@ -1,6 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+    dependencies {
+        classpath 'com.github.PufferfishModLoader:PufferfishGradle:master-SNAPSHOT'
+    }
+}
+
 plugins {
     id 'java'
 }
+
+apply plugin: 'dev.cbyrne.pufferfishmodloader.gradle'
 
 group 'dev.cbyrne'
 version '1.0.0'
