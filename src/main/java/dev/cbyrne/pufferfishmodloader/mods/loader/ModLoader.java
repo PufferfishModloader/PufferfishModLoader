@@ -50,7 +50,7 @@ public class ModLoader {
         state = ModLoaderState.DISCOVERING;
     }
 
-    private List<Class<?>> discoverMods(URLClassLoader loader, File location) throws MalformedURLException {
+    private List<Class<?>> discoverMods(URLClassLoader loader, File location) {
         assert state == ModLoaderState.DISCOVERING;
         List<Class<?>> classes = new ArrayList<>();
         if (location.isFile() && (location.getName().endsWith(".jar") || location.getName().endsWith(".zip"))) {
@@ -61,7 +61,7 @@ public class ModLoader {
 
                     if (entry.getName().endsWith(".class")) {
                         try {
-                            Class<?> clazz = Class.forName(entry.getName().substring(0, entry.getName().length() - ".class".length()).replace('/', '.'), false, loader);
+                            Class<?> clazz = Class.forName(getClassNameFromPath(entry.getName()), false, loader);
                             if (clazz.getAnnotation(Mod.class) != null) {
                                 classes.add(clazz);
                             }
@@ -87,7 +87,7 @@ public class ModLoader {
                                 try {
                                     String relativePath = f.getPath().substring(location.getPath().length() + 1);
                                     Class<?> clazz = Class.forName(
-                                            relativePath.substring(0, relativePath.length() - ".class".length()).replace('/', '.'),
+                                            getClassNameFromPath(relativePath),
                                             false,
                                             loader
                                     );
@@ -112,6 +112,12 @@ public class ModLoader {
         return classes;
     }
 
+    private String getClassNameFromPath(String path) {
+        return path.replace('/', '.')
+                .replace('\\', '.') // For some reason paths can include both / and \ on windows; we need to deal with that
+                .substring(0, path.length() - ".class".length());
+    }
+
     private ModJsonEntry createFallbackDefinition(String id) {
         return new ModJsonEntry(id,
                 "dev",
@@ -124,7 +130,7 @@ public class ModLoader {
     }
 
     public static void main(String... args) throws URISyntaxException, MalformedURLException {
-        URLClassLoader loader = new URLClassLoader(new URL[] { ModLoader.class.getProtectionDomain().getCodeSource().getLocation() });
+        URLClassLoader loader = new URLClassLoader(new URL[]{ModLoader.class.getProtectionDomain().getCodeSource().getLocation()});
         System.out.println(ModLoader.INSTANCE.discoverMods(loader, new File(loader.getURLs()[0].toURI())));
     }
 }
