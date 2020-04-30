@@ -1,7 +1,6 @@
 package dev.cbyrne.pufferfishmodloader.launch;
 
 import dev.cbyrne.pufferfishmodloader.PufferfishModLoader;
-import dev.cbyrne.pufferfishmodloader.mods.loader.ModLoader;
 import net.minecraft.client.main.Main;
 
 import java.io.File;
@@ -14,6 +13,6 @@ public class PMLClientMain {
         PufferfishModLoader.INSTANCE.gameDir = new File(args[Arrays.asList(args).indexOf("--gameDir") + 1]);
         PufferfishModLoader.INSTANCE.preInit();
 
-        // Main.main(args);
+        Main.main(args);
     }
 }

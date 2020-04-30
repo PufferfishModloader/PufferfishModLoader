@@ -7,8 +7,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class PufferfishModLoader {
     public static final PufferfishModLoader INSTANCE = new PufferfishModLoader();
