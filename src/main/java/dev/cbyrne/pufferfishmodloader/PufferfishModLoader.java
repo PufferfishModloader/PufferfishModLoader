@@ -1,14 +1,19 @@
 package dev.cbyrne.pufferfishmodloader;
 
 import dev.cbyrne.pufferfishmodloader.mods.ModLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
 public class PufferfishModLoader {
     public static final PufferfishModLoader INSTANCE = new PufferfishModLoader();
-    public File modsDir = new File("pmlmods");
+    public final Logger logger = LogManager.getLogger("PufferfishModLoader");
+    public File gameDir;
 
-    public static void main(String... args) {
-        ModLoader.INSTANCE.start();
+    public void preInit() {
+        logger.info("PML Started!");
+        ModLoader.INSTANCE.discoverMods();
+        ModLoader.INSTANCE.loadMods();
     }
 }

@@ -19,10 +19,15 @@ apply plugin: 'dev.cbyrne.pufferfishmodloader.gradle'
 group 'dev.cbyrne'
 version '1.0.0'
 
+minecraft {
+    separateVersionJars true
+    target '1.15.2'
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.2'
 }
