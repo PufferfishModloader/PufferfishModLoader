@@ -1,6 +1,5 @@
 package dev.cbyrne.pufferfishmodloader;
 
-import dev.cbyrne.pufferfishmodloader.mods.ModLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +12,6 @@ public class PufferfishModLoader {
 
     public void preInit() {
         logger.info("PML Started!");
-        ModLoader.INSTANCE.discoverMods();
-        ModLoader.INSTANCE.loadMods();
+
     }
 }
