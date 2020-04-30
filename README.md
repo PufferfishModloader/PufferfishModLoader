@@ -14,7 +14,7 @@ As developers, we understand the struggle of updating your codebase for newer ve
 
 **Other features**:
 - Easy dependency management
-- Light-weight
+- Lightweight
 - Easy to use [UI Framework](https://github.com/PufferfishModLoader/PufferfishUI)
 - Flexible configuration system
 - User-friendly update system
