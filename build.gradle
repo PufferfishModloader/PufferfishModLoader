@@ -26,8 +26,12 @@ minecraft {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://jitpack.io'
+    }
 }
 
 dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.2'
+    implementation group: 'com.github.ronmamo', name: 'reflections', version: 'master-SNAPSHOT'
 }
