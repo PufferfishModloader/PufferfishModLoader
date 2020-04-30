@@ -14,7 +14,6 @@ public class PMLClientMain {
     public static void main(String... args) {
         Minecraft.setInstance(new MinecraftImpl());
         PufferfishModLoader.INSTANCE.gameDir = new File(args[Arrays.asList(args).indexOf("--gameDir") + 1]);
-        PufferfishModLoader.INSTANCE.mcVersion = MCVersion.valueOf(MinecraftVersion.create().getName());
         PufferfishModLoader.INSTANCE.preInit();
 
         Main.main(args);
