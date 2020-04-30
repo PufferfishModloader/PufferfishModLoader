@@ -61,7 +61,7 @@ public class ModLoader {
 
                     if (entry.getName().endsWith(".class")) {
                         try {
-                            Class<?> clazz = Class.forName(entry.getName().substring(0, entry.getName().length() - ".class".length()).replace('/', '.'), false, loader);
+                            Class<?> clazz = Class.forName(entry.getName().substring(0, entry.getName().length() - ".class".length()).replace(File.separatorChar, '.'), false, loader);
                             if (clazz.getAnnotation(Mod.class) != null) {
                                 classes.add(clazz);
                             }
@@ -87,7 +87,7 @@ public class ModLoader {
                                 try {
                                     String relativePath = f.getPath().substring(location.getPath().length() + 1);
                                     Class<?> clazz = Class.forName(
-                                            relativePath.substring(0, relativePath.length() - ".class".length()).replace('/', '.'),
+                                            relativePath.substring(0, relativePath.length() - ".class".length()).replace(File.separatorChar, '.'),
                                             false,
                                             loader
                                     );
