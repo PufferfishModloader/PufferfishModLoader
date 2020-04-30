@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -40,75 +39,113 @@ public class ModLoader {
 
     public void addModDirectory(File directory) {
         assert state == ModLoaderState.INITIALIZING;
-        LOGGER.debug("Adding mod directory {}", directory);
+        LOGGER.info("Adding mod directory {}", directory);
         modDirectories.add(directory);
     }
 
-    public void discoverMods() {
+    public void discoverMods() throws MalformedURLException, URISyntaxException {
         assert state == ModLoaderState.INITIALIZING;
-        LOGGER.debug("Discovering mods in classpath and directories {}", modDirectories);
+        LOGGER.info("Discovering mods in classpath and directories: {}", modDirectories);
         state = ModLoaderState.DISCOVERING;
+
+        ArrayList<URL> availableModsURL = new ArrayList<>();
+        for (File directory : modDirectories) {
+            if (!directory.exists()) {
+                LOGGER.info("{} doesn't exist! Creating...", directory);
+                boolean success = directory.mkdir();
+                if (!success) {
+                    LOGGER.warn("Failed to create {}, skipping!", directory);
+                    break;
+                }
+            }
+
+            if (directory.listFiles() == null) {
+                LOGGER.warn("No files found in {}, skipping!", directory);
+            } else {
+                File[] validMods = Objects.requireNonNull(directory.listFiles((dir, name) -> name.toLowerCase().endsWith(".jar")));
+                for (File mod : validMods) {
+                    availableModsURL.add(mod.toURI().toURL());
+                }
+            }
+        }
+
+        LOGGER.info("Found {} mod file(s) to load from directories", availableModsURL.size());
+
+        availableModsURL.add(ModLoader.class.getProtectionDomain().getCodeSource().getLocation());
+        URLClassLoader loader = new URLClassLoader(availableModsURL.toArray(new URL[0]));
+
+        List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
+        LOGGER.info("Mod Classes: {}", modClasses);
     }
 
-    private List<Class<?>> discoverMods(URLClassLoader loader, File location) {
+    private List<Class<?>> discoverMods(URLClassLoader loader, URL[] locations) {
         assert state == ModLoaderState.DISCOVERING;
         List<Class<?>> classes = new ArrayList<>();
-        if (location.isFile() && (location.getName().endsWith(".jar") || location.getName().endsWith(".zip"))) {
-            try (ZipFile file = new ZipFile(location)) {
-                Enumeration<? extends ZipEntry> entries = file.entries();
-                while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
+        for (URL urlLocation : locations) {
+            File location = null;
+            try {
+                location = new File(urlLocation.toURI());
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            assert location != null;
+            if (location.isFile() && (location.getName().endsWith(".jar") || location.getName().endsWith(".zip"))) {
+                try (ZipFile file = new ZipFile(location)) {
+                    Enumeration<? extends ZipEntry> entries = file.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
 
-                    if (entry.getName().endsWith(".class")) {
-                        try {
-                            Class<?> clazz = Class.forName(getClassNameFromPath(entry.getName()), false, loader);
-                            if (clazz.getAnnotation(Mod.class) != null) {
-                                classes.add(clazz);
-                            }
-                        } catch (ClassNotFoundException e) {
-                            LOGGER.error("Couldn't get class from class file at {}", entry.getName(), e);
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                LOGGER.error("Couldn't read mod file at {}", location, e);
-            }
-        } else if (location.isDirectory()) {
-            // Assume this mod isn't zipped; that's fine, we'll deal with that.
-            Stack<File> stack = new Stack<>();
-            stack.push(location);
-            while (!stack.isEmpty()) {
-                File current = stack.pop();
-                File[] contents = current.listFiles();
-                if (contents != null) {
-                    for (File f : contents) {
-                        if (f.isFile()) {
-                            if (f.getName().endsWith(".class")) {
-                                try {
-                                    String relativePath = f.getPath().substring(location.getPath().length() + 1);
-                                    Class<?> clazz = Class.forName(
-                                            getClassNameFromPath(relativePath),
-                                            false,
-                                            loader
-                                    );
-                                    LOGGER.info("Checking " + clazz);
-                                    if (clazz.getAnnotation(Mod.class) != null) {
-                                        classes.add(clazz);
-                                    }
-                                } catch (ClassNotFoundException e) {
-                                    LOGGER.error("Couldn't get class from class file at {}", f, e);
+                        if (entry.getName().endsWith(".class")) {
+                            try {
+                                Class<?> clazz = Class.forName(getClassNameFromPath(entry.getName()), false, loader);
+                                if (clazz.getAnnotation(Mod.class) != null) {
+                                    classes.add(clazz);
                                 }
+                            } catch (ClassNotFoundException e) {
+                                LOGGER.error("Couldn't get class from class file at {}", entry.getName(), e);
                             }
-                        } else {
-                            stack.push(f);
+                        }
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Couldn't read mod file at {}", location, e);
+                }
+            } else if (location.isDirectory()) {
+                // Assume this mod isn't zipped; that's fine, we'll deal with that.
+                Stack<File> stack = new Stack<>();
+                stack.push(location);
+                while (!stack.isEmpty()) {
+                    File current = stack.pop();
+                    File[] contents = current.listFiles();
+                    if (contents != null) {
+                        for (File f : contents) {
+                            if (f.isFile()) {
+                                if (f.getName().endsWith(".class")) {
+                                    try {
+                                        String relativePath = f.getPath().substring(location.getPath().length() + 1);
+                                        Class<?> clazz = Class.forName(
+                                                getClassNameFromPath(relativePath),
+                                                false,
+                                                loader
+                                        );
+                                        LOGGER.debug("Checking " + clazz);
+                                        if (clazz.getAnnotation(Mod.class) != null) {
+                                            classes.add(clazz);
+                                        }
+                                    } catch (ClassNotFoundException e) {
+                                        LOGGER.error("Couldn't get class from class file at {}", f, e);
+                                    }
+                                }
+                            } else {
+                                stack.push(f);
+                            }
                         }
                     }
                 }
+            } else {
+                LOGGER.warn("Don't know how to discover mods in {}", location);
             }
-        } else {
-            LOGGER.warn("Don't know how to discover mods in {}", location);
         }
-        LOGGER.debug("Found {} mod classes in {}", classes.size(), location);
+        LOGGER.info("Found {} mod classes in directories + classpath", classes.size());
         return classes;
     }
 
@@ -127,10 +164,5 @@ public class ModLoader {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-    }
-
-    public static void main(String... args) throws URISyntaxException, MalformedURLException {
-        URLClassLoader loader = new URLClassLoader(new URL[]{ModLoader.class.getProtectionDomain().getCodeSource().getLocation()});
-        System.out.println(ModLoader.INSTANCE.discoverMods(loader, new File(loader.getURLs()[0].toURI())));
     }
 }

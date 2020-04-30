@@ -14,7 +14,6 @@ public class PMLClientMain {
         PufferfishModLoader.INSTANCE.gameDir = new File(args[Arrays.asList(args).indexOf("--gameDir") + 1]);
         PufferfishModLoader.INSTANCE.preInit();
 
-        ModLoader.main(args);
         // Main.main(args);
     }
 }
