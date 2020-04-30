@@ -12,6 +12,5 @@ public class PufferfishModLoader {
 
     public void preInit() {
         logger.info("PML Started!");
-
     }
 }
