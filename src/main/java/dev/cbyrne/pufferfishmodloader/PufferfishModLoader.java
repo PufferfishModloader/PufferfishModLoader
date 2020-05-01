@@ -1,5 +1,6 @@
 package dev.cbyrne.pufferfishmodloader;
 
+import dev.cbyrne.pufferfishmodloader.api.Minecraft;
 import dev.cbyrne.pufferfishmodloader.mods.core.MCVersion;
 import dev.cbyrne.pufferfishmodloader.mods.loader.ModLoader;
 import org.apache.logging.log4j.LogManager;
@@ -13,13 +14,13 @@ public class PufferfishModLoader {
     public static final PufferfishModLoader INSTANCE = new PufferfishModLoader();
     public final Logger logger = LogManager.getLogger("PufferfishModLoader");
     public File gameDir;
-    public MCVersion mcVersion;
+    public MCVersion mcVersion = Minecraft.getInstance().getVersion();
 
     public void preInit() {
         logger.info("PML Started!");
 
         ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods"));
-        ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods" + File.pathSeparator + mcVersion.name()));
+        ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods/" + mcVersion.version));
 
         try {
             ModLoader.INSTANCE.discoverMods();
