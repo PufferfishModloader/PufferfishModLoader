@@ -3,7 +3,6 @@
 </p>
 
 ## A fast, light-weight and powerful mod loader for Minecraft
-
 PufferfishModLoader is the next-level of Minecraft Modding. PML is designed to be light-weight, fast and powerful. (and of course, developer-friendly)
 
 ### I want to use PML, but I'm not sure about it... Why should I use it?
@@ -19,3 +18,6 @@ As developers, we understand the struggle of updating your codebase for newer ve
 - Flexible configuration system
 - User-friendly update system
 - and more...
+
+### Credits
+- We would like to thank [Hyperium](https://github.com/HyperiumClient/Hyperium) for making their EventBus open source and licensed under LGPL-3. This is used in our project under the LGPL-3 license conditions.
