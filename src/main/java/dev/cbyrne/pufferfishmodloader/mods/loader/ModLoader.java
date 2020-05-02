@@ -1,5 +1,7 @@
 package dev.cbyrne.pufferfishmodloader.mods.loader;
 
+import dev.cbyrne.pufferfishmodloader.events.EventBus;
+import dev.cbyrne.pufferfishmodloader.events.core.mod.ModInitEvent;
 import dev.cbyrne.pufferfishmodloader.mods.core.Mod;
 import dev.cbyrne.pufferfishmodloader.mods.json.ModJsonEntry;
 import org.apache.logging.log4j.LogManager;
@@ -75,7 +77,18 @@ public class ModLoader {
         URLClassLoader loader = new URLClassLoader(availableModsURL.toArray(new URL[0]));
 
         List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
-        LOGGER.info("Mod Classes: {}", modClasses);
+
+        // Make a new instance of the classes
+        for (Class clazz : modClasses) {
+            try {
+                clazz.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Call ModInitEvent
+        EventBus.INSTANCE.post(new ModInitEvent());
     }
 
     private List<Class<?>> discoverMods(URLClassLoader loader, URL[] locations) {
