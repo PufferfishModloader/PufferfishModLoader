@@ -19,13 +19,13 @@ import java.util.zip.ZipFile;
 
 public class ModLoader {
     public static final ModLoader INSTANCE = new ModLoader();
-    private static final String[] BLACKLISTED_PACKAGES = {
+    /*private static final String[] BLACKLISTED_PACKAGES = {
             "java/",
             "javax/",
             "com/sun/",
             "jdk/internal/",
             "sun/"
-    };
+    };*/
     private static final Logger LOGGER = LogManager.getLogger();
     private final List<File> modDirectories = new ArrayList<>();
     private final Map<String, RegisteredMod> mods = new HashMap<>();
@@ -39,13 +39,13 @@ public class ModLoader {
         return null;
     }
 
-    public void addModDirectory(File directory) {
+    public void addModDirectory(File... directories) {
         assert state == ModLoaderState.INITIALIZING;
-        LOGGER.info("Adding mod directory {}", directory);
-        modDirectories.add(directory);
+        modDirectories.addAll(Arrays.asList(directories));
+        LOGGER.info("Added mod directories {}", modDirectories);
     }
 
-    public void discoverMods() throws MalformedURLException, URISyntaxException {
+    public void discoverMods() throws MalformedURLException {
         assert state == ModLoaderState.INITIALIZING;
         LOGGER.info("Discovering mods in classpath and directories: {}", modDirectories);
         state = ModLoaderState.DISCOVERING;
@@ -79,7 +79,7 @@ public class ModLoader {
         List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
 
         // Make a new instance of the classes
-        for (Class clazz : modClasses) {
+        for (Class<?> clazz : modClasses) {
             try {
                 clazz.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {

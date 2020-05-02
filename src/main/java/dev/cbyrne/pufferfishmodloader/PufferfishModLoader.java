@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.util.Date;
 
 public class PufferfishModLoader {
     public static final PufferfishModLoader INSTANCE = new PufferfishModLoader();
@@ -20,15 +20,14 @@ public class PufferfishModLoader {
 
     @InvokeEvent
     public void onStart(GameStartEvent event) {
-        logger.info("PML Started!");
-
-        ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods"));
-        ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods/" + mcVersion.version));
+        ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods"), new File(gameDir, "pmlmods/" + mcVersion.version));
 
         try {
             ModLoader.INSTANCE.discoverMods();
-        } catch (MalformedURLException | URISyntaxException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
+        logger.info("PML Started!");
     }
 }
