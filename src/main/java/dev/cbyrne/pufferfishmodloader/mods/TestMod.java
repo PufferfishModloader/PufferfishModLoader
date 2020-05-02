@@ -1,4 +1,4 @@
-package dev.cbyrne.pufferfishmodloader;
+package dev.cbyrne.pufferfishmodloader.mods;
 
 import dev.cbyrne.pufferfishmodloader.events.EventBus;
 import dev.cbyrne.pufferfishmodloader.events.InvokeEvent;

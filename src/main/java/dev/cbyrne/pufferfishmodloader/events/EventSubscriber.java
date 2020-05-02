@@ -27,15 +27,13 @@ import org.objectweb.asm.Type;
 import java.lang.reflect.Method;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.RETURN;
 
 /**
  * Used to store information about events and index them so they can be easily accessed by ASM
  */
 public final class EventSubscriber {
-    private static int ID = 0;
     private static final AsmClassLoader LOADER = new AsmClassLoader();
-
+    private static int ID = 0;
     @NotNull
     private final Object instance;
     @NotNull
@@ -141,7 +139,7 @@ public final class EventSubscriber {
         String desc = name.replace(".", "/");
         String instanceClassName = instance.getClass().getName().replace(".", "/");
 
-        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{ "dev/cbyrne/pufferfishmodloader/events/EventSubscriber$EventHandler" });
+        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{"dev/cbyrne/pufferfishmodloader/events/EventSubscriber$EventHandler"});
 
         cw.visitSource(".dynamic", null);
         {
@@ -183,13 +181,11 @@ public final class EventSubscriber {
     }
 
     private static class AsmClassLoader extends ClassLoader {
-        private AsmClassLoader()
-        {
+        private AsmClassLoader() {
             super(AsmClassLoader.class.getClassLoader());
         }
 
-        public Class<?> define(String name, byte[] data)
-        {
+        public Class<?> define(String name, byte[] data) {
             return defineClass(name, data, 0, data.length);
         }
     }

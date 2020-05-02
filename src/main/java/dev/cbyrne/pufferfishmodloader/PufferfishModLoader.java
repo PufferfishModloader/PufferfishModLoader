@@ -1,7 +1,6 @@
 package dev.cbyrne.pufferfishmodloader;
 
 import dev.cbyrne.pufferfishmodloader.api.Minecraft;
-import dev.cbyrne.pufferfishmodloader.events.EventBus;
 import dev.cbyrne.pufferfishmodloader.events.InvokeEvent;
 import dev.cbyrne.pufferfishmodloader.events.core.GameStartEvent;
 import dev.cbyrne.pufferfishmodloader.mods.core.MCVersion;

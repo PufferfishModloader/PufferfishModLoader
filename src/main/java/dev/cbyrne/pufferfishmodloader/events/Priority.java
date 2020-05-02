@@ -18,7 +18,6 @@
 package dev.cbyrne.pufferfishmodloader.events;
 
 public enum Priority {
-
     HIGH(-1), // Called first
     NORMAL(0),
     LOW(1); // Called last

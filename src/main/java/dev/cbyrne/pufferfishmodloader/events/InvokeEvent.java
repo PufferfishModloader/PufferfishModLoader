@@ -17,6 +17,8 @@
 
 package dev.cbyrne.pufferfishmodloader.events;
 
+import dev.cbyrne.pufferfishmodloader.events.core.GameStartEvent;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,6 +27,8 @@ import java.lang.annotation.Target;
 /**
  * Assign to a method to invoke an event
  * The first parameter of the method should be the event it is calling
+ *
+ * @see dev.cbyrne.pufferfishmodloader.PufferfishModLoader#onStart(GameStartEvent)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

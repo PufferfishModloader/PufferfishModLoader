@@ -19,6 +19,8 @@ package dev.cbyrne.pufferfishmodloader.events;
 
 /**
  * Core event class
+ *
+ * @see dev.cbyrne.pufferfishmodloader.events.core.GameStartEvent
  */
 public class Event {
     public void post() {
