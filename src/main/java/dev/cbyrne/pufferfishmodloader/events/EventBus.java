@@ -28,12 +28,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SuppressWarnings("UnstableApiUsage")
 public class EventBus {
     public static final EventBus INSTANCE = new EventBus();
-    private HashMap<Class<?>, CopyOnWriteArrayList<EventSubscriber>> subscriptions = new HashMap<>();
+    private final HashMap<Class<?>, CopyOnWriteArrayList<EventSubscriber>> subscriptions = new HashMap<>();
 
     /**
      * Registers all methods of a class into the event system with
-     * the {@link package me.kbrewster.blazeapi.api.event.InvokeEvent} annotation
+     * the {@link package dev.cbyrne.pufferfishmodloader.events.InvokeEvent} annotation
      *
+     * @see dev.cbyrne.pufferfishmodloader.events.InvokeEvent
      * @param obj An instance of the class which you would like to register as an event
      */
     public void register(Object obj) {
