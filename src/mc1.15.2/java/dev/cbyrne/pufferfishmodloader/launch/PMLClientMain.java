@@ -1,24 +1,20 @@
 package dev.cbyrne.pufferfishmodloader.launch;
 
-import dev.cbyrne.pufferfishmodloader.PufferfishModLoader;
-import dev.cbyrne.pufferfishmodloader.api.Minecraft;
-import dev.cbyrne.pufferfishmodloader.events.EventBus;
-import dev.cbyrne.pufferfishmodloader.events.core.GameStartEvent;
-import dev.cbyrne.pufferfishmodloader.impl.MinecraftImpl;
-import net.minecraft.client.main.Main;
+import dev.cbyrne.pufferfishmodloader.mods.launch.loader.TransformingClassLoader;
 
-import java.io.File;
-import java.util.Arrays;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class PMLClientMain {
-    public static void main(String... args) {
-        Minecraft.setInstance(new MinecraftImpl());
-
-        PufferfishModLoader.INSTANCE.logger.info("PML starting...");
-        PufferfishModLoader.INSTANCE.gameDir = new File(args[Arrays.asList(args).indexOf("--gameDir") + 1]);
-        EventBus.INSTANCE.register(PufferfishModLoader.INSTANCE);
-        EventBus.INSTANCE.post(new GameStartEvent());
-
-        Main.main(args);
+    public static void main(String... args) throws Throwable {
+        ClassLoader classLoader = new TransformingClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        Class<?> clazz = classLoader.loadClass("dev.cbyrne.pufferfishmodloader.launch.PMLEntryPoint");
+        Method method = clazz.getMethod("start", String[].class, boolean.class);
+        try {
+            method.invoke(null, args, false);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 }
