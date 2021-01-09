@@ -2,6 +2,7 @@ package me.dreamhopping.pml.mods.loader;
 
 import me.dreamhopping.pml.events.EventBus;
 import me.dreamhopping.pml.events.core.mod.ModInitEvent;
+import me.dreamhopping.pml.mods.TestMod;
 import me.dreamhopping.pml.mods.core.Mod;
 import me.dreamhopping.pml.mods.json.ModJsonEntry;
 import org.apache.logging.log4j.LogManager;
@@ -94,6 +95,8 @@ public class ModLoader {
     private List<Class<?>> discoverMods(URLClassLoader loader, URL[] locations) {
         assert state == ModLoaderState.DISCOVERING;
         List<Class<?>> classes = new ArrayList<>();
+        classes.add(TestMod.class);
+
         for (URL urlLocation : locations) {
             File location = null;
             try {
