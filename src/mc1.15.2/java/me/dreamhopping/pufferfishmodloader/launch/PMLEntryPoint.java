@@ -5,8 +5,8 @@ import me.dreamhopping.pufferfishmodloader.api.Minecraft;
 import me.dreamhopping.pufferfishmodloader.events.EventBus;
 import me.dreamhopping.pufferfishmodloader.events.core.GameStartEvent;
 import me.dreamhopping.pufferfishmodloader.impl.MinecraftImpl;
-import me.dreamhopping.pufferfishmodloader.mods.launch.loader.TransformingClassLoader;
 import me.dreamhopping.pufferfishmodloader.mods.launch.loader.RuntimeTransformer;
+import me.dreamhopping.pufferfishmodloader.mods.launch.loader.TransformingClassLoader;
 import net.minecraft.client.main.Main;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -17,28 +17,38 @@ import java.util.Arrays;
 public class PMLEntryPoint {
     public static void start(String[] args, boolean server) { // Called by PMLClientMain and PMLServerMain via reflection
         TransformingClassLoader classLoader = (TransformingClassLoader) PMLEntryPoint.class.getClassLoader();
+
+        // Transform the window title
         classLoader.registerTransformer(new RuntimeTransformer() {
             @Override
             public boolean willTransform(String name) {
-                return name.equals("net/minecraft/client/main/Main");
+                return name.equals("net/minecraft/client/MinecraftClient");
             }
 
             @Override
-            public ClassNode transform(ClassNode node) {
-                for (MethodNode method : node.methods) {
-                    if (method.name.equals("main") && method.desc.equals("([Ljava/lang/String;)V")) {
-                        method.instructions.clear();
-                        method.tryCatchBlocks.clear();
-                        method.localVariables.clear();
-                        method.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
-                        method.instructions.add(new LdcInsnNode("hello from ASM"));
-                        method.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
-                        method.instructions.add(new InsnNode(Opcodes.RETURN));
+            public ClassNode transform(ClassNode classNode) {
+                for (MethodNode methodNode : classNode.methods) {
+                    if (methodNode.name.equals("getWindowTitle")) {
+                        InsnList list = new InsnList();
+                        list.add(new LdcInsnNode(" | PufferfishModLoader (dev/1.0)"));
+                        list.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;"));
+
+                        // Find the "toString" call and insert before that
+                        for (AbstractInsnNode node = methodNode.instructions.getLast(); node != null; node = node.getPrevious()) {
+                            if (node.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+                                MethodInsnNode castedNode = (MethodInsnNode) node;
+                                if (castedNode.owner.equals("java/lang/StringBuilder") && castedNode.name.equals("toString") && castedNode.desc.equals("()Ljava/lang/String;")) {
+                                    methodNode.instructions.insertBefore(castedNode, list);
+                                }
+                            }
+                        }
                     }
                 }
-                return node;
+
+                return classNode;
             }
         });
+
         Minecraft.setInstance(new MinecraftImpl());
 
         PufferfishModLoader.INSTANCE.logger.info("PML starting...");
