@@ -30,7 +30,7 @@ public class TransformingClassLoader extends URLClassLoader {
     private final List<RuntimeTransformer> transformers = new ArrayList<>();
 
     public TransformingClassLoader() {
-        super(((URLClassLoader) TransformingClassLoader.class.getClassLoader()).getURLs(), null);
+        super(new URL[0], null);
         addClassLoadExclusion("java.");
         addClassLoadExclusion("sun.");
         addClassLoadExclusion("me.dreamhopping.pufferfishmodloader.mods.launch.loader."); // otherwise you can't use this class anywhere except the main class
@@ -90,7 +90,7 @@ public class TransformingClassLoader extends URLClassLoader {
                 packageName = name.substring(0, lastDot);
             }
             String filename = name.replace('.', '/') +  ".class";
-            URL resource = findResource(filename);
+            URL resource = systemLoader.getResource(filename);
             URLConnection connection = null;
             if (resource != null) connection = resource.openConnection();
             CodeSigner[] signers = null;
@@ -103,10 +103,12 @@ public class TransformingClassLoader extends URLClassLoader {
                         Manifest manifest = file.getManifest();
                         JarEntry entry = file.getJarEntry(filename);
 
-                        Package pkg = getPackage(packageName);
-                        signers = entry.getCodeSigners();
-                        if (pkg == null) {
-                            definePackage(packageName, manifest, jarCon.getJarFileURL());
+                        if (entry != null) {
+                            Package pkg = getPackage(packageName);
+                            signers = entry.getCodeSigners();
+                            if (pkg == null) {
+                                definePackage(packageName, manifest, jarCon.getJarFileURL());
+                            }
                         }
                     }
                 } else {
@@ -133,6 +135,16 @@ public class TransformingClassLoader extends URLClassLoader {
                 throw new ClassNotFoundException(name, e);
             }
         }
+    }
+
+    @Override
+    public URL findResource(String name) {
+        return systemLoader.getResource(name);
+    }
+
+    @Override
+    public Enumeration<URL> findResources(String name) throws IOException {
+        return systemLoader.getResources(name);
     }
 
     private byte[] process(String name, byte[] bytes) throws ClassNotFoundException {
@@ -162,7 +174,7 @@ public class TransformingClassLoader extends URLClassLoader {
             return null;
         }
 
-        URL resource = findResource(name.replace('.', '/') + ".class");
+        URL resource = systemLoader.getResource(name.replace('.', '/') + ".class");
         if (resource != null) {
             try (InputStream stream = resource.openStream()) {
                 return IOUtils.toByteArray(stream);

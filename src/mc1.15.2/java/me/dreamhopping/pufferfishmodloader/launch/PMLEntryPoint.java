@@ -1,6 +1,5 @@
 package me.dreamhopping.pufferfishmodloader.launch;
 
-import com.sun.corba.se.impl.oa.toa.TransientObjectManager;
 import me.dreamhopping.pufferfishmodloader.PufferfishModLoader;
 import me.dreamhopping.pufferfishmodloader.api.Minecraft;
 import me.dreamhopping.pufferfishmodloader.events.EventBus;
