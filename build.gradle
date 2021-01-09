@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.PufferfishModLoader:PufferfishGradle:4ee84ca' // 🦀
+        classpath 'com.github.PufferfishModLoader:PufferfishGradle:1b2b872'
     }
 }
 
@@ -14,9 +14,9 @@ plugins {
     id 'java'
 }
 
-apply plugin: 'dev.cbyrne.pufferfishmodloader.gradle'
+apply plugin: 'me.dreamhopping.pufferfishmodloader.gradle'
 
-group 'dev.cbyrne'
+group 'me.dreamhopping'
 version '1.0.0'
 
 minecraft {
