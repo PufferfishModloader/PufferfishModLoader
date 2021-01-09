@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -74,9 +75,11 @@ public class ModLoader {
 
         LOGGER.info("Found {} mod file(s) to load from directories", availableModsURL.size());
 
-        availableModsURL.add(ModLoader.class.getProtectionDomain().getCodeSource().getLocation());
-        URLClassLoader loader = new URLClassLoader(availableModsURL.toArray(new URL[0]));
+        // This is also only a really really really REALLY bad implementation, this should be fixed before release
+        String path = ModLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        availableModsURL.add(new URL("file:" + path.substring(0, path.indexOf("/classes/") + 9)));
 
+        URLClassLoader loader = new URLClassLoader(availableModsURL.toArray(new URL[0]));
         List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
 
         // Make a new instance of the classes
@@ -95,7 +98,6 @@ public class ModLoader {
     private List<Class<?>> discoverMods(URLClassLoader loader, URL[] locations) {
         assert state == ModLoaderState.DISCOVERING;
         List<Class<?>> classes = new ArrayList<>();
-        classes.add(TestMod.class);
 
         for (URL urlLocation : locations) {
             File location = null;
@@ -138,11 +140,23 @@ public class ModLoader {
                                 if (f.getName().endsWith(".class")) {
                                     try {
                                         String relativePath = f.getPath().substring(location.getPath().length() + 1);
-                                        Class<?> clazz = Class.forName(
-                                                getClassNameFromPath(relativePath),
-                                                false,
-                                                loader
-                                        );
+                                        Class<?> clazz;
+
+                                        // This is a TEMPORARY SOLUTION, please do not push this to production whenever 1.0 is releasing
+                                        if (relativePath.startsWith("me" + File.separator + "dreamhopping" + File.separator + "pml")) {
+                                            clazz = Class.forName(
+                                                    getClassNameFromPath(relativePath),
+                                                    false,
+                                                    Mod.class.getClassLoader()
+                                            );
+                                        } else {
+                                            clazz = Class.forName(
+                                                    getClassNameFromPath(relativePath),
+                                                    false,
+                                                    loader
+                                            );
+                                        }
+
                                         LOGGER.debug("Checking " + clazz);
                                         if (clazz.getAnnotation(Mod.class) != null) {
                                             classes.add(clazz);
