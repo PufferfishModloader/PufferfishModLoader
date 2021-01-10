@@ -12,7 +12,6 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'maven-publish'
 }
 
 apply plugin: 'me.dreamhopping.pufferfishmodloader.gradle'
@@ -44,15 +43,4 @@ dependencies {
     implementation('org.ow2.asm:asm-tree:8.0.1')
     implementation('com.google.guava:guava:21.0')
     implementation('org.jetbrains:annotations:19.0.0')
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            pml(MavenPublication) {
-                from components.java
-                artifact project.tasks.mc1152Jar // TODO: Add all the source sets' jar tasks automatically
-            }
-        }
-    }
 }
