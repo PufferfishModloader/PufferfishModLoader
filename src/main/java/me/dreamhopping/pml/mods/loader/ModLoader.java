@@ -76,11 +76,14 @@ public class ModLoader {
         LOGGER.info("Found {} mod file(s) to load from directories", availableModsURL.size());
 
         // This is also only a really really really REALLY bad implementation, this should be fixed before release
-        String path = ModLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        availableModsURL.add(new URL("file:" + path.substring(0, path.indexOf("/classes/") + 9)));
+        // String path = ModLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        // availableModsURL.add(new URL("file:" + path.substring(0, path.indexOf("/classes/") + 9)));
 
         URLClassLoader loader = new URLClassLoader(availableModsURL.toArray(new URL[0]));
         List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
+        modClasses.add(TestMod.class);
+
+        LOGGER.info("Found {} mod classes in directories + classpath", modClasses.size());
 
         // Make a new instance of the classes
         for (Class<?> clazz : modClasses) {
@@ -175,7 +178,7 @@ public class ModLoader {
                 LOGGER.warn("Don't know how to discover mods in {}", location);
             }
         }
-        LOGGER.info("Found {} mod classes in directories + classpath", classes.size());
+
         return classes;
     }
 
