@@ -42,24 +42,7 @@ public class FontRendererImpl extends FontRenderer {
     }
 
     public int getCharWidth(char character) {
-        if (character == 167) {
-            return -1;
-        } else if (character == ' ') {
-            return 4;
-        } else {
-            int var1 = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(character);
-            if (character > 0 && var1 != -1) {
-                return (new int[256])[var1];
-            } else if ((new byte[65536])[var1] != 0) {
-                int var2 = (new byte[65536])[var1] & 255;
-                int var3 = var2 >>> 4;
-                int var4 = var2 & 15;
-                ++var4;
-                return (var4 - var3) / 2 + 1;
-            } else {
-                return 0;
-            }
-        }
+        return getStringWidth(String.valueOf(character));
     }
 
     public int splitStringWidth(String string, int width) {
