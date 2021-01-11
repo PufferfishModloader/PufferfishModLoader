@@ -1,6 +1,7 @@
 package me.dreamhopping.pml.mods;
 
 import me.dreamhopping.pml.api.client.Minecraft;
+import me.dreamhopping.pml.api.client.gui.FontRenderer;
 import me.dreamhopping.pml.events.EventBus;
 import me.dreamhopping.pml.events.InvokeEvent;
 import me.dreamhopping.pml.events.core.client.chat.ClientChatReceivedEvent;
@@ -9,8 +10,8 @@ import me.dreamhopping.pml.events.core.client.net.ClientDisconnectedEvent;
 import me.dreamhopping.pml.events.core.client.net.ClientJoinServerEvent;
 import me.dreamhopping.pml.events.core.client.player.ClientItemDropEvent;
 import me.dreamhopping.pml.events.core.client.player.ClientPlayerRespawnEvent;
-import me.dreamhopping.pml.events.core.client.tick.ClientRenderTickEvent;
 import me.dreamhopping.pml.events.core.client.tick.ClientTickEvent;
+import me.dreamhopping.pml.events.core.gui.ClientRenderGameOverlayEvent;
 import me.dreamhopping.pml.events.core.mod.ModInitEvent;
 import me.dreamhopping.pml.mods.core.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -87,8 +88,11 @@ public class TestMod {
     }
 
     @InvokeEvent
-    public void onRenderTick(ClientRenderTickEvent event) {
-        // WARNING: Do not uncomment this unless you want some sweet sweet log spam
-        // logger.info("Render Tick!");
+    public void onRenderTick(ClientRenderGameOverlayEvent event) {
+        final Minecraft mc = Minecraft.getInstance();
+        mc.getFontRenderer().drawString("PufferfishModLoader TestMod", 5, 5, -1, true);
+        mc.getFontRenderer().drawString("MC Version: " + mc.getVersion().version, 5, 15, -1, true);
+        mc.getFontRenderer().drawString("FPS: " + mc.getFPS(), 5, 25, -1, true);
+        mc.getFontRenderer().drawString("Paused? " + (mc.isGamePaused() ? "yes" : "no"), 5, 35, -1, true);
     }
 }

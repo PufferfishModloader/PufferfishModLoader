@@ -1,6 +1,8 @@
 package me.dreamhopping.pml.launch;
 
 import me.dreamhopping.pml.PufferfishModLoader;
+import me.dreamhopping.pml.api.client.gui.FontRenderer;
+import me.dreamhopping.pml.impl.FontRendererImpl;
 import me.dreamhopping.pml.impl.MinecraftImpl;
 import me.dreamhopping.pml.api.client.Minecraft;
 import me.dreamhopping.pml.events.EventBus;
@@ -23,6 +25,7 @@ public class PMLEntryPoint {
         classLoader.registerTransformer(new ClientPlayNetworkHandlerTransformer());
         classLoader.registerTransformer(new MinecraftClientTransformer());
 
+        FontRenderer.setInstance(new FontRendererImpl());
         Minecraft.setInstance(new MinecraftImpl());
 
         PufferfishModLoader.INSTANCE.logger.info("PML starting...");

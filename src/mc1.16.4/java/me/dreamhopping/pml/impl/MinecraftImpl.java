@@ -23,18 +23,7 @@ public class MinecraftImpl extends Minecraft {
     }
 
     public int getFPS() {
-        // TODO: Implement this properly once access transformers are added
-        int fps = 0;
-
-        if (MinecraftClient.getInstance() != null) {
-            try {
-                fps = (int) FieldUtils.readField(MinecraftClient.getInstance(), "currentFps", true);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return fps;
+        return MinecraftClient.currentFps;
     }
 
     public Map<String, String> getSessionInfo() {

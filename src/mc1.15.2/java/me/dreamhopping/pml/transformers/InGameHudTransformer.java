@@ -18,6 +18,15 @@ public class InGameHudTransformer implements RuntimeTransformer {
 
                 methodNode.instructions.insert(list);
                 break;
+            } else if (methodNode.name.equals("render")) {
+                for (AbstractInsnNode node = methodNode.instructions.getLast(); node != null; node = node.getPrevious()) {
+                    if (node.getOpcode() == Opcodes.RETURN) {
+                        MethodInsnNode renderGameInsn = new MethodInsnNode(Opcodes.INVOKESTATIC, getImplementationClass("InGameHud"), "render", "()V");
+                        methodNode.instructions.insertBefore(node, renderGameInsn);
+
+                        break;
+                    }
+                }
             }
         }
 
