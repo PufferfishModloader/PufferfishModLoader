@@ -117,8 +117,22 @@ public class ModLoader {
                         ZipEntry entry = entries.nextElement();
 
                         if (entry.getName().endsWith(".class")) {
+                            System.out.println("Class entry name: " + entry.getName());
+
                             try {
-                                Class<?> clazz = Class.forName(getClassNameFromPath(entry.getName()), false, loader);
+                                Class<?> clazz;
+                                if (Mod.class.getClassLoader() != loader.getClass().getClassLoader()) {
+                                    clazz = Class.forName(getClassNameFromPath(entry.getName()), false, Mod.class.getClassLoader());
+                                } else {
+                                    clazz = Class.forName(getClassNameFromPath(entry.getName()), false, loader);
+                                }
+
+                                System.out.println("Class: " + clazz);
+                                System.out.println("Annotations: " + Arrays.toString(clazz.getAnnotations()));
+                                System.out.println("Has annotation: " + (clazz.getAnnotation(Mod.class) != null));
+                                System.out.println("Annotation classloader hashcode: " + Mod.class.getClassLoader().hashCode());
+                                System.out.println("Mod Class classloader hashcode: " + clazz.getClassLoader().hashCode());
+
                                 if (clazz.getAnnotation(Mod.class) != null) {
                                     classes.add(clazz);
                                 }
