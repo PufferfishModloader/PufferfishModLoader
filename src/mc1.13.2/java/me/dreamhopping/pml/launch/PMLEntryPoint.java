@@ -5,7 +5,7 @@ import me.dreamhopping.pml.events.EventBus;
 import me.dreamhopping.pml.events.core.GameStartEvent;
 import me.dreamhopping.pml.impl.MinecraftImpl;
 import me.dreamhopping.pml.mods.launch.loader.TransformingClassLoader;
-import me.dreamhopping.pml.api.Minecraft;
+import me.dreamhopping.pml.api.client.Minecraft;
 import me.dreamhopping.pml.transformers.*;
 import net.minecraft.client.main.Main;
 

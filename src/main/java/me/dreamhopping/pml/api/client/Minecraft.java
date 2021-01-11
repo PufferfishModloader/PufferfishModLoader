@@ -1,6 +1,8 @@
-package me.dreamhopping.pml.api;
+package me.dreamhopping.pml.api.client;
 
 import me.dreamhopping.pml.mods.core.MCVersion;
+
+import java.util.Map;
 
 public abstract class Minecraft {
     private static Minecraft impl;
@@ -15,4 +17,12 @@ public abstract class Minecraft {
     }
 
     public abstract MCVersion getVersion();
+
+    public abstract boolean is64Bit();
+
+    public abstract boolean isGamePaused();
+
+    public abstract int getFPS();
+
+    public abstract Map<String, String> getSessionInfo();
 }

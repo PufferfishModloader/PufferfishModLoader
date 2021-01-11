@@ -1,6 +1,6 @@
 package me.dreamhopping.pml;
 
-import me.dreamhopping.pml.api.Minecraft;
+import me.dreamhopping.pml.api.client.Minecraft;
 import me.dreamhopping.pml.events.InvokeEvent;
 import me.dreamhopping.pml.events.core.GameStartEvent;
 import me.dreamhopping.pml.mods.core.MCVersion;

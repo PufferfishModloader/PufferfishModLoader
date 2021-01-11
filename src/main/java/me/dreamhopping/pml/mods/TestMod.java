@@ -1,5 +1,6 @@
 package me.dreamhopping.pml.mods;
 
+import me.dreamhopping.pml.api.client.Minecraft;
 import me.dreamhopping.pml.events.EventBus;
 import me.dreamhopping.pml.events.InvokeEvent;
 import me.dreamhopping.pml.events.core.client.chat.ClientChatReceivedEvent;
@@ -33,6 +34,25 @@ public class TestMod {
     @InvokeEvent
     public void onChatReceived(ClientChatReceivedEvent event) {
         logger.info("TestMod received a chat message: " + event.message);
+
+        switch (event.message) {
+            case "debugfps": {
+                logger.info("debug fps: " + Minecraft.getInstance().getFPS());
+                break;
+            }
+            case "sessioninfo": {
+                logger.info("session info: " + Minecraft.getInstance().getSessionInfo());
+                break;
+            }
+            case "ispaused": {
+                logger.info("paused: " + Minecraft.getInstance().isGamePaused());
+                break;
+            }
+            case "is64bit": {
+                logger.info("is 64 bit: " + Minecraft.getInstance().is64Bit());
+                break;
+            }
+        }
     }
 
     @InvokeEvent
