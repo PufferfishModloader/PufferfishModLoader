@@ -21,6 +21,7 @@ import java.net.InetSocketAddress;
 
 @Mod("bruh")
 public class TestMod {
+    private Minecraft mc;
     public final Logger logger = LogManager.getLogger("TestMod");
 
     public TestMod() {
@@ -30,6 +31,7 @@ public class TestMod {
     @InvokeEvent
     public void onInit(ModInitEvent event) {
         logger.info("Hello world! TestMod is now awake...");
+        mc = Minecraft.getInstance();
     }
 
     @InvokeEvent
@@ -89,7 +91,6 @@ public class TestMod {
 
     @InvokeEvent
     public void onRenderTick(ClientRenderGameOverlayEvent event) {
-        final Minecraft mc = Minecraft.getInstance();
         mc.getFontRenderer().drawString("PufferfishModLoader TestMod", 5, 5, -1, true);
         mc.getFontRenderer().drawString("MC Version: " + mc.getVersion().version, 5, 15, -1, true);
         mc.getFontRenderer().drawString("FPS: " + mc.getFPS(), 5, 25, -1, true);
