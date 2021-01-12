@@ -5,8 +5,10 @@ import me.dreamhopping.pml.events.core.mod.ModInitEvent;
 import me.dreamhopping.pml.mods.TestMod;
 import me.dreamhopping.pml.mods.core.Mod;
 import me.dreamhopping.pml.mods.json.ModJsonEntry;
+import me.dreamhopping.pml.mods.loader.loader.PMLClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.ReflectionUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,9 +81,14 @@ public class ModLoader {
         // String path = ModLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         // availableModsURL.add(new URL("file:" + path.substring(0, path.indexOf("/classes/") + 9)));
 
-        URLClassLoader loader = new URLClassLoader(availableModsURL.toArray(new URL[0]));
+        PMLClassLoader loader = new PMLClassLoader(availableModsURL.toArray(new URL[0]), Collections.singletonList(this.getClass().getClassLoader()));
+        try {
+            loader.loadClass("TestMod");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
-        modClasses.add(TestMod.class);
 
         LOGGER.info("Found {} mod classes in directories + classpath", modClasses.size());
 
