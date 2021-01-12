@@ -27,24 +27,17 @@ public class PMLClassLoader extends URLClassLoader {
     }
 
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        System.out.println("Finding class " + name);
         Class<?> clazz = null;
 
         try {
             clazz = super.findClass(name);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Failed to find class " + name);
-
+        } catch (NoClassDefFoundError e) {
             boolean foundClass = false;
             int searchedParents = 0;
 
             while (!foundClass && searchedParents < this.parents.size()) {
-                System.out.println("Searching parents to find class " + name);
-
                 // Failed to load class, search parents
                 for (ClassLoader classLoader : this.parents) {
-                    System.out.println("Searching in " + classLoader.hashCode() + " for class " + name);
-
                     try {
                         clazz = classLoader.loadClass(name);
 
@@ -52,15 +45,18 @@ public class PMLClassLoader extends URLClassLoader {
                             foundClass = true;
                             break;
                         }
-                    } catch (ClassNotFoundException ignored) {}
+                    } catch (Exception ignored) {
+                    }
 
                     searchedParents++;
                 }
             }
+        } catch (Error | Exception e) {
+            return null;
         }
 
+
         if (clazz == null) {
-            System.out.println("No parents could find class " + name);
             throw new ClassNotFoundException(name);
         }
 
@@ -68,24 +64,17 @@ public class PMLClassLoader extends URLClassLoader {
     }
 
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        System.out.println("Loading class " + name);
         Class<?> clazz = null;
 
         try {
             clazz = super.loadClass(name);
         } catch (ClassNotFoundException e) {
-            System.out.println("Failed to load class " + name);
-
             boolean foundClass = false;
             int searchedParents = 0;
 
             while (!foundClass && searchedParents < this.parents.size()) {
-                System.out.println("Iterating over parents to load class " + name);
-
                 // Failed to load class, search parents
                 for (ClassLoader classLoader : this.parents) {
-                    System.out.println("Attempting to load" + name + " in " + classLoader.hashCode());
-
                     try {
                         clazz = classLoader.loadClass(name);
 
@@ -93,15 +82,17 @@ public class PMLClassLoader extends URLClassLoader {
                             foundClass = true;
                             break;
                         }
-                    } catch (ClassNotFoundException ignored) {}
+                    } catch (Exception ignored) {
+                    }
 
                     searchedParents++;
                 }
             }
+        } catch (Error | Exception e) {
+            return null;
         }
 
         if (clazz == null) {
-            System.out.println("No parents could load class " + name);
             throw new ClassNotFoundException(name);
         }
 

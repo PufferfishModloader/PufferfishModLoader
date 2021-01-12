@@ -2,13 +2,11 @@ package me.dreamhopping.pml.mods.loader;
 
 import me.dreamhopping.pml.events.EventBus;
 import me.dreamhopping.pml.events.core.mod.ModInitEvent;
-import me.dreamhopping.pml.mods.TestMod;
 import me.dreamhopping.pml.mods.core.Mod;
 import me.dreamhopping.pml.mods.json.ModJsonEntry;
 import me.dreamhopping.pml.mods.loader.loader.PMLClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.ReflectionUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -77,18 +74,16 @@ public class ModLoader {
 
         LOGGER.info("Found {} mod file(s) to load from directories", availableModsURL.size());
 
-        // This is also only a really really really REALLY bad implementation, this should be fixed before release
-        // String path = ModLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        // availableModsURL.add(new URL("file:" + path.substring(0, path.indexOf("/classes/") + 9)));
-
-        PMLClassLoader loader = new PMLClassLoader(availableModsURL.toArray(new URL[0]), Collections.singletonList(this.getClass().getClassLoader()));
-        try {
-            loader.loadClass("TestMod");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        String[] javaClasspath = System.getProperty("java.class.path").split(File.pathSeparator);
+        for (String entry : javaClasspath) {
+            if (!entry.startsWith(System.getProperty("java.home"))) {
+                availableModsURL.add(new File(entry).toURI().toURL());
+            }
         }
 
-        List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURL.toArray(new URL[0]));
+        URL[] availableModsURLArray = availableModsURL.toArray(new URL[0]);
+        PMLClassLoader loader = new PMLClassLoader(availableModsURLArray, Collections.singletonList(this.getClass().getClassLoader()));
+        List<Class<?>> modClasses = ModLoader.INSTANCE.discoverMods(loader, availableModsURLArray);
 
         LOGGER.info("Found {} mod classes in directories + classpath", modClasses.size());
 
@@ -119,20 +114,31 @@ public class ModLoader {
             assert location != null;
             if (location.isFile() && (location.getName().endsWith(".jar") || location.getName().endsWith(".zip"))) {
                 try (ZipFile file = new ZipFile(location)) {
+                    if (file.getEntry("mods.json") == null) continue;
+
                     Enumeration<? extends ZipEntry> entries = file.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
 
                         if (entry.getName().endsWith(".class")) {
-                            System.out.println("Class entry name: " + entry.getName());
-
                             try {
-                                Class<?> clazz = Class.forName(getClassNameFromPath(entry.getName()), false, loader);
+                                Class<?> clazz = Class.forName(
+                                        getClassNameFromPath(entry.getName()),
+                                        false,
+                                        loader
+                                );
 
-                                if (clazz.getAnnotation(Mod.class) != null) {
+                                Class<?> annotationClass = Class.forName(
+                                        Mod.class.getName(),
+                                        false,
+                                        loader
+                                );
+
+                                // LOGGER.info("Checking " + clazz);
+                                if (clazz.getAnnotation((Class<Mod>) annotationClass) != null) {
                                     classes.add(clazz);
                                 }
-                            } catch (ClassNotFoundException e) {
+                            } catch (Exception | Error e) {
                                 LOGGER.error("Couldn't get class from class file at {}", entry.getName(), e);
                             }
                         }
@@ -153,25 +159,21 @@ public class ModLoader {
                                 if (f.getName().endsWith(".class")) {
                                     try {
                                         String relativePath = f.getPath().substring(location.getPath().length() + 1);
-                                        Class<?> clazz;
 
-                                        // This is a TEMPORARY SOLUTION, please do not push this to production whenever 1.0 is releasing
-                                        if (relativePath.startsWith("me" + File.separator + "dreamhopping" + File.separator + "pml")) {
-                                            clazz = Class.forName(
-                                                    getClassNameFromPath(relativePath),
-                                                    false,
-                                                    Mod.class.getClassLoader()
-                                            );
-                                        } else {
-                                            clazz = Class.forName(
-                                                    getClassNameFromPath(relativePath),
-                                                    false,
-                                                    loader
-                                            );
-                                        }
+                                        Class<?> clazz = Class.forName(
+                                                getClassNameFromPath(relativePath),
+                                                false,
+                                                loader
+                                        );
 
-                                        LOGGER.debug("Checking " + clazz);
-                                        if (clazz.getAnnotation(Mod.class) != null) {
+                                        Class<?> annotationClass = Class.forName(
+                                                Mod.class.getName(),
+                                                false,
+                                                loader
+                                        );
+
+                                        // LOGGER.info("Checking " + clazz);
+                                        if (clazz.getAnnotation((Class<Mod>) annotationClass) != null) {
                                             classes.add(clazz);
                                         }
                                     } catch (ClassNotFoundException e) {
