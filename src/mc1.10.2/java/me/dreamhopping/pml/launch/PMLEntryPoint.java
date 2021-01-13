@@ -29,6 +29,7 @@ public class PMLEntryPoint {
 
         PufferfishModLoader.INSTANCE.logger.info("PML starting...");
         PufferfishModLoader.INSTANCE.gameDir = new File(args[Arrays.asList(args).indexOf("--gameDir") + 1]);
+        PufferfishModLoader.INSTANCE.loadMods();
 
         EventBus.INSTANCE.register(PufferfishModLoader.INSTANCE);
         EventBus.INSTANCE.post(new GameStartEvent());

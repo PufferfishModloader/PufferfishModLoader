@@ -19,6 +19,10 @@ public class PufferfishModLoader {
 
     @InvokeEvent
     public void onStart(GameStartEvent event) {
+        logger.info("PML Started!");
+    }
+
+    public void loadMods() {
         ModLoader.INSTANCE.addModDirectory(new File(gameDir, "pmlmods"), new File(gameDir, "pmlmods/" + mcVersion.version));
 
         try {
@@ -26,7 +30,5 @@ public class PufferfishModLoader {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
-        logger.info("PML Started!");
     }
 }
