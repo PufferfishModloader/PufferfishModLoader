@@ -122,20 +122,24 @@ public class ModLoader {
 
                         if (entry.getName().endsWith(".class")) {
                             try {
-                                Class<?> clazz = Class.forName(
-                                        getClassNameFromPath(entry.getName()),
-                                        false,
-                                        loader
-                                );
+                                Class<?> clazz;
 
-                                Class<?> annotationClass = Class.forName(
-                                        Mod.class.getName(),
-                                        false,
-                                        loader
-                                );
+                                if (loader != Mod.class.getClassLoader()) {
+                                    clazz = Class.forName(
+                                            getClassNameFromPath(entry.getName()),
+                                            false,
+                                            Mod.class.getClassLoader()
+                                    );
+                                } else {
+                                    clazz = Class.forName(
+                                            getClassNameFromPath(entry.getName()),
+                                            false,
+                                            loader
+                                    );
+                                }
 
                                 // LOGGER.info("Checking " + clazz);
-                                if (clazz.getAnnotation((Class<Mod>) annotationClass) != null) {
+                                if (clazz.getAnnotation(Mod.class) != null) {
                                     classes.add(clazz);
                                 }
                             } catch (Exception | Error e) {
@@ -160,20 +164,23 @@ public class ModLoader {
                                     try {
                                         String relativePath = f.getPath().substring(location.getPath().length() + 1);
 
-                                        Class<?> clazz = Class.forName(
-                                                getClassNameFromPath(relativePath),
-                                                false,
-                                                loader
-                                        );
-
-                                        Class<?> annotationClass = Class.forName(
-                                                Mod.class.getName(),
-                                                false,
-                                                loader
-                                        );
+                                        Class<?> clazz;
+                                        if (loader != Mod.class.getClassLoader()) {
+                                            clazz = Class.forName(
+                                                    getClassNameFromPath(relativePath),
+                                                    false,
+                                                    Mod.class.getClassLoader()
+                                            );
+                                        } else {
+                                            clazz = Class.forName(
+                                                    getClassNameFromPath(relativePath),
+                                                    false,
+                                                    loader
+                                            );
+                                        }
 
                                         // LOGGER.info("Checking " + clazz);
-                                        if (clazz.getAnnotation((Class<Mod>) annotationClass) != null) {
+                                        if (clazz.getAnnotation(Mod.class) != null) {
                                             classes.add(clazz);
                                         }
                                     } catch (ClassNotFoundException e) {
