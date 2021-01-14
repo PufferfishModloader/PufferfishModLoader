@@ -31,7 +31,7 @@ public class TransformingClassLoader extends URLClassLoader {
     private final List<RuntimeTransformer> transformers = new ArrayList<>();
 
     public TransformingClassLoader() {
-        super(new URL[0],null);
+        super(new URL[0], null);
         addClassLoadExclusion("java.");
         addClassLoadExclusion("sun.");
         addClassLoadExclusion("me.dreamhopping.pml.mods.launch.loader."); // otherwise you can't use this class anywhere except the main class
@@ -92,7 +92,7 @@ public class TransformingClassLoader extends URLClassLoader {
             if (lastDot != -1) {
                 packageName = name.substring(0, lastDot);
             }
-            String filename = name.replace('.', '/') +  ".class";
+            String filename = name.replace('.', '/') + ".class";
             URL resource = systemLoader.getResource(filename);
             URLConnection connection = null;
             if (resource != null) connection = resource.openConnection();
@@ -142,6 +142,9 @@ public class TransformingClassLoader extends URLClassLoader {
 
     @Override
     public URL findResource(String name) {
+        if (name.equals("log4j2.xml")) {
+            return systemLoader.getResource("pml.log4j2.xml");
+        }
         return systemLoader.getResource(name);
     }
 

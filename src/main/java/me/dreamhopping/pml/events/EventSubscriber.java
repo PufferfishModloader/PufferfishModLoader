@@ -40,8 +40,8 @@ public final class EventSubscriber {
     private final Method method;
     @NotNull
     private final Priority priority;
-    private String objName;
-    private String methodName;
+    private final String objName;
+    private final String methodName;
 
     // ASM manufactured event handler.
     private EventHandler handler;

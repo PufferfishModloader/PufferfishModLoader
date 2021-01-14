@@ -18,7 +18,7 @@
 package me.dreamhopping.pml.events;
 
 import me.dreamhopping.pml.PufferfishModLoader;
-import me.dreamhopping.pml.events.core.GameStartEvent;
+import me.dreamhopping.pml.events.impl.GameStartEvent;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

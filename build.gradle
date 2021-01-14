@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.PufferfishModLoader:PufferfishGradle:bc93731'
+        classpath 'com.github.PufferfishModLoader:PufferfishGradle:3.0.0-rc3'
     }
 }
 
@@ -21,16 +21,9 @@ group 'me.dreamhopping'
 version '1.0.0'
 
 minecraft {
-    separateVersionJars true
+    separateVersionJars()
 
-    target('1.16.4') {
-        accessTransformer 'src/mc1.16.4/resources/net.minecraft.client.MinecraftClient.transformer.json'
-    }
-    target('1.15.2') {
-        accessTransformer 'src/mc1.15.2/resources/net.minecraft.client.MinecraftClient.transformer.json'
-    }
-
-    target '1.14.4', '1.13.2', '1.12', '1.11', '1.10.2', '1.9.4', '1.8.9'
+    target '1.16.4', '1.15.2', '1.14.4', '1.13.2', '1.12', '1.11', '1.10.2', '1.9.4', '1.8.9'
 
     mods {
         pml {

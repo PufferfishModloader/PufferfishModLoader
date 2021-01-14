@@ -1,4 +1,4 @@
-package me.dreamhopping.pml.events.core;
+package me.dreamhopping.pml.events.impl;
 
 import me.dreamhopping.pml.PufferfishModLoader;
 import me.dreamhopping.pml.events.Event;

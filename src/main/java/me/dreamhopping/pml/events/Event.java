@@ -17,7 +17,7 @@
 
 package me.dreamhopping.pml.events;
 
-import me.dreamhopping.pml.events.core.GameStartEvent;
+import me.dreamhopping.pml.events.impl.GameStartEvent;
 
 /**
  * Core event class

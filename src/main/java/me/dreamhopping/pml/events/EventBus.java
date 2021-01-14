@@ -34,8 +34,8 @@ public class EventBus {
      * Registers all methods of a class into the event system with
      * the {@link package me.dreamhopping.pufferfishmodloader.events.InvokeEvent} annotation
      *
-     * @see InvokeEvent
      * @param obj An instance of the class which you would like to register as an event
+     * @see InvokeEvent
      */
     public void register(Object obj) {
         // also contains the class itself

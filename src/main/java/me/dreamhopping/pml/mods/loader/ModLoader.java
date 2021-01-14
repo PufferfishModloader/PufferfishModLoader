@@ -1,7 +1,5 @@
 package me.dreamhopping.pml.mods.loader;
 
-import me.dreamhopping.pml.events.EventBus;
-import me.dreamhopping.pml.events.core.mod.ModInitEvent;
 import me.dreamhopping.pml.mods.core.Mod;
 import me.dreamhopping.pml.mods.json.ModJsonEntry;
 import me.dreamhopping.pml.mods.loader.loader.PMLClassLoader;
@@ -95,9 +93,6 @@ public class ModLoader {
                 e.printStackTrace();
             }
         }
-
-        // Call ModInitEvent
-        EventBus.INSTANCE.post(new ModInitEvent());
     }
 
     private List<Class<?>> discoverMods(URLClassLoader loader, URL[] locations) {
