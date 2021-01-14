@@ -1,13 +1,16 @@
 package me.dreamhopping.pml.launch;
 
 import me.dreamhopping.pml.mods.launch.loader.TransformingClassLoader;
+import me.dreamhopping.pml.transformers.ClientBrandRetrieverTransformer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class PMLClientMain {
     public static void main(String... args) throws Throwable {
-        ClassLoader classLoader = new TransformingClassLoader();
+        TransformingClassLoader classLoader = new TransformingClassLoader();
+        classLoader.registerTransformer(new ClientBrandRetrieverTransformer());
+
         Thread.currentThread().setContextClassLoader(classLoader);
 
         Class<?> clazz = classLoader.loadClass("me.dreamhopping.pml.launch.PMLEntryPoint");
