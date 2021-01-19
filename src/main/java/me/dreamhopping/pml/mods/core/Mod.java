@@ -1,12 +1,7 @@
 package me.dreamhopping.pml.mods.core;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface Mod {
+    String getId();
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Mod {
-    String value();
+    void load();
 }
