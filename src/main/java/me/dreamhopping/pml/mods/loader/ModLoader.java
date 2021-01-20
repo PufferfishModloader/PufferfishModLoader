@@ -87,7 +87,7 @@ public class ModLoader {
                                         e.printStackTrace();
                                     }
                                 }
-                            } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
+                            } catch (Throwable ignored) {
 
                             }
                         }
