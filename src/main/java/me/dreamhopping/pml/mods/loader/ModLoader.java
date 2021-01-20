@@ -55,11 +55,13 @@ public class ModLoader {
                     try {
                         URL resource = loader.loadResource("mods.json");
                         if (resource == null) {
-                            classLoader = devLoader = createDevLoaderIfNecessary(devLoader, classPathData);
+                            // classLoader = devLoader = createDevLoaderIfNecessary(devLoader, classPathData);
+                            classLoader = devLoader = (PMLClassLoader) ModLoader.class.getClassLoader();
                             devLoader.getLoaders().add(loader);
                         }
                     } catch (IOException e) {
-                        classLoader = devLoader = createDevLoaderIfNecessary(devLoader, classPathData);
+                        // classLoader = devLoader = createDevLoaderIfNecessary(devLoader, classPathData);
+                        classLoader = devLoader = (PMLClassLoader) ModLoader.class.getClassLoader();
                         devLoader.getLoaders().add(loader);
                     }
 
