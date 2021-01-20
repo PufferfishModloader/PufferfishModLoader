@@ -1,7 +1,7 @@
 package me.dreamhopping.pml.mods.loader;
 
-import me.dreamhopping.pml.launch.ClassPathData;
-import me.dreamhopping.pml.launch.PMLLauncher;
+import me.dreamhopping.pml.main.ClassPathData;
+import me.dreamhopping.pml.main.PMLLauncher;
 import me.dreamhopping.pml.mods.core.Mod;
 import me.dreamhopping.pml.mods.loader.util.PMLClassLoader;
 import me.dreamhopping.pml.mods.loader.util.ResourceLoader;

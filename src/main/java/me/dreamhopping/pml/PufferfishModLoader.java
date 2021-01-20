@@ -1,6 +1,6 @@
 package me.dreamhopping.pml;
 
-import me.dreamhopping.pml.launch.ClassPathData;
+import me.dreamhopping.pml.main.ClassPathData;
 import me.dreamhopping.pml.mods.loader.ModLoader;
 
 import java.io.File;

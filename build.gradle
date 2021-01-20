@@ -1,5 +1,3 @@
-import java.security.MessageDigest
-
 buildscript {
     repositories {
         mavenCentral()
@@ -8,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.PufferfishModLoader:PufferfishGradle:3.0.0-rc3'
+        classpath 'com.github.PufferfishModLoader:PufferfishGradle:7cf9df2'
     }
 }
 
@@ -26,69 +24,23 @@ sourceCompatibility = targetCompatibility = '1.8'
 
 minecraft {
     separateVersionJars()
+    loader()
 
     target '1.16.4', '1.15.2', '1.14.4', '1.13.2', '1.12', '1.11', '1.10.2', '1.9.4', '1.8.9'
 }
 
-repositories {
-    mavenCentral()
+
+task('sourcesJar', type: org.gradle.jvm.tasks.Jar) {
+    group 'build'
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+    exclude 'pml.properties'
 }
 
 publishing {
     publications {
         pml(MavenPublication) {
             from components.java
-            for (def target : project.minecraft.targets) {
-                artifact project.tasks.getByName(project.sourceSets.getByName("mc${target.version}").jarTaskName)
-            }
         }
     }
-}
-
-for (def target : project.minecraft.targets) {
-    def task = tasks.register("createClassPathInfo${target.version}") {
-        def config = project.configurations.getByName("mcLibs${target.version}")
-        doLast {
-            def output = new File(temporaryDir, 'pml-classpath.txt')
-            def writer = null
-            try {
-                writer = new BufferedWriter(new FileWriter(output))
-                for (def file : config) {
-                    writer.write(sha1(file))
-                    writer.newLine()
-                }
-            } finally {
-                if (writer != null) writer.close()
-            }
-        }
-    }
-    tasks.getByName(project.sourceSets.getByName("mc${target.version}").processResourcesTaskName).configure {
-        it.dependsOn(task.name)
-        it.from(new File(task.get().temporaryDir, 'pml-classpath.txt'))
-    }
-}
-
-def sha1(File file) {
-    def digest = MessageDigest.getInstance("SHA-1")
-    def buffer = new byte[4096]
-    def input = null
-    try {
-        input = new FileInputStream(file)
-        while (true) {
-            def bytesRead = input.read(buffer, 0, buffer.length)
-            if (bytesRead < 0) break
-            digest.update(buffer, 0, bytesRead)
-        }
-    } finally {
-        if (input != null) input.close()
-    }
-    return hexStr(digest.digest())
-}
-
-def hexStr(byte[] bytes) {
-    def builder = new StringBuilder()
-    for (def b : bytes) {
-        builder.append(String.format("%02x", b))
-    }
-    return builder.toString()
 }

@@ -1,6 +1,6 @@
 package me.dreamhopping.pml.mods.loader.util.mc;
 
-import me.dreamhopping.pml.launch.transformer.AccessFixer;
+import me.dreamhopping.pml.main.transformer.AccessFixer;
 import me.dreamhopping.pml.mods.loader.util.PMLClassLoader;
 import me.dreamhopping.pml.mods.loader.util.ResourceLoader;
 import me.dreamhopping.pml.util.Pair;
