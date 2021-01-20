@@ -1,11 +1,14 @@
 package me.dreamhopping.pml.main;
 
+import me.dreamhopping.pml.main.transformer.AccessFixer;
 import me.dreamhopping.pml.mods.loader.util.PMLClassLoader;
 import me.dreamhopping.pml.mods.loader.util.ResourceLoader;
 import me.dreamhopping.pml.mods.loader.util.impl.DirectoryResourceLoader;
 import me.dreamhopping.pml.mods.loader.util.impl.JarResourceLoader;
 import me.dreamhopping.pml.mods.loader.util.impl.NoopResourceLoader;
+import me.dreamhopping.pml.mods.loader.util.mc.RuntimeTransformer;
 import me.dreamhopping.pml.mods.loader.util.mc.TransformingClassLoader;
+import me.dreamhopping.pml.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +60,7 @@ public class PMLLauncher {
                 ClassPathData.class.getName(),
                 ResourceLoader.class.getName(),
                 PMLClassLoader.class.getName(),
+                RuntimeTransformer.class.getName(),
                 TransformingClassLoader.class.getName()
         );
         return loader;
