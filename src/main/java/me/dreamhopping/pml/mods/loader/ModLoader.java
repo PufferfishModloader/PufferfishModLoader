@@ -56,7 +56,6 @@ public class ModLoader {
                         if (path.endsWith(".class")) {
                             if (classLoader == null) {
                                 classLoader = new PMLClassLoader(loader, new ArrayList<>(1));
-                                classLoader.getParents().add(getClass().getClassLoader());
 
                                 try {
                                     URL resource = loader.loadResource("mods.json");
@@ -66,6 +65,8 @@ public class ModLoader {
                                 } catch (IOException e) {
                                     addExtraLibsToClassLoader(classLoader, classPathData);
                                 }
+
+                                classLoader.getParents().add(getClass().getClassLoader());
                             }
 
                             try {
