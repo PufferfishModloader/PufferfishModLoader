@@ -54,7 +54,7 @@ public class PMLLauncher {
         }
 
         TransformingClassLoader loader
-                = new TransformingClassLoader(loaders, Collections.singletonList(ClassLoader.getSystemClassLoader().getParent()));
+                = new TransformingClassLoader(loaders, new ArrayList<>(Collections.singletonList(ClassLoader.getSystemClassLoader().getParent())));
         loader.loadWithSystemLoader(
                 PMLLauncher.class.getName(),
                 ClassPathData.class.getName(),
