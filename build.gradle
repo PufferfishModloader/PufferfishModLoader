@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.PufferfishModLoader:PufferfishGradle:7cf9df2'
+        classpath 'com.github.PufferfishModLoader:PufferfishGradle:019fc22'
     }
 }
 
@@ -28,7 +28,6 @@ minecraft {
 
     target '1.16.4', '1.15.2', '1.14.4', '1.13.2', '1.12', '1.11', '1.10.2', '1.9.4', '1.8.9'
 }
-
 
 task('sourcesJar', type: org.gradle.jvm.tasks.Jar) {
     group 'build'
