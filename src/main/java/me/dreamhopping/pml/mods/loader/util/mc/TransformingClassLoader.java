@@ -13,13 +13,10 @@ import java.util.*;
 
 public class TransformingClassLoader extends PMLClassLoader {
     private final List<RuntimeTransformer> transformers = new ArrayList<>();
-    private final List<ResourceLoader> loaders;
     private final List<String> loadWithSystemLoader = new ArrayList<>();
 
     public TransformingClassLoader(List<ResourceLoader> loaders, List<ClassLoader> parents) {
-        super(null, parents);
-
-        this.loaders = loaders;
+        super(loaders, parents);
 
         registerTransformer(new AccessFixer());
     }
@@ -86,26 +83,6 @@ public class TransformingClassLoader extends PMLClassLoader {
     @Override
     protected URL findResource(String name) {
         if (name.equals("log4j2.xml")) return findResource("pml.log4j2.xml");
-        Pair<ResourceLoader, URL> info = getResourceInfo(name);
-        return info == null ? null : info.getSecond();
-    }
-
-    private Pair<ResourceLoader, URL> getResourceInfo(String name) {
-        for (ResourceLoader loader : loaders) {
-            try {
-                URL l = loader.loadResource(name);
-                if (l != null) return new Pair<>(loader, l);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void close() throws IOException {
-        for (ResourceLoader loader : loaders) {
-            loader.close();
-        }
+        return super.findResource(name);
     }
 }

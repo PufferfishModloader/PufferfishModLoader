@@ -44,6 +44,7 @@ public class ModLoader {
             }
 
             modFiles.addAll(classPathData.getExtra());
+            PMLClassLoader devLoader = null;
 
             for (File file : modFiles) {
                 ResourceLoader loader = null;
@@ -52,19 +53,24 @@ public class ModLoader {
                     loader = PMLLauncher.createResourceLoader(file);
                     PMLClassLoader classLoader = null;
 
+                    try {
+                        URL resource = loader.loadResource("mods.json");
+                        if (resource == null) {
+                            classLoader = devLoader = createDevLoaderIfNecessary(devLoader, classPathData);
+                            devLoader.getLoaders().add(loader);
+                        }
+                    } catch (IOException e) {
+                        classLoader = devLoader = createDevLoaderIfNecessary(devLoader, classPathData);
+                        devLoader.getLoaders().add(loader);
+                    }
+
                     for (String path : loader.getFiles()) {
                         if (path.endsWith(".class")) {
                             if (classLoader == null) {
-                                classLoader = new PMLClassLoader(loader, new ArrayList<>(1));
-
-                                try {
-                                    URL resource = loader.loadResource("mods.json");
-                                    if (resource == null) {
-                                        addExtraLibsToClassLoader(classLoader, classPathData);
-                                    }
-                                } catch (IOException e) {
-                                    addExtraLibsToClassLoader(classLoader, classPathData);
-                                }
+                                classLoader = new PMLClassLoader(
+                                        Collections.singletonList(loader),
+                                        new ArrayList<>(1)
+                                );
 
                                 classLoader.getParents().add(getClass().getClassLoader());
                             }
@@ -105,10 +111,17 @@ public class ModLoader {
         }
     }
 
+    private static PMLClassLoader createDevLoaderIfNecessary(PMLClassLoader current, ClassPathData data) throws IOException {
+        if (current != null) return current;
+        PMLClassLoader loader = new PMLClassLoader(new ArrayList<>(), new ArrayList<>());
+        addExtraLibsToClassLoader(loader, data);
+        loader.getParents().add(ModLoader.class.getClassLoader());
+        return loader;
+    }
+
     private static void addExtraLibsToClassLoader(PMLClassLoader target, ClassPathData data) throws IOException {
         for (File file : data.getExtra()) {
-            PMLClassLoader loader = new PMLClassLoader(PMLLauncher.createResourceLoader(file), Collections.singletonList(ModLoader.class.getClassLoader()));
-            target.getParents().add(loader);
+            target.getLoaders().add(PMLLauncher.createResourceLoader(file));
         }
     }
 

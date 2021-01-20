@@ -1,5 +1,7 @@
 package me.dreamhopping.pml.mods.loader.util;
 
+import me.dreamhopping.pml.util.Pair;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,12 +20,12 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class PMLClassLoader extends SecureClassLoader implements Closeable {
-    private final ResourceLoader resourceLoader;
+    private final List<ResourceLoader> loaders;
     private final List<ClassLoader> parents;
 
-    public PMLClassLoader(ResourceLoader resourceLoader, List<ClassLoader> parents) {
+    public PMLClassLoader(List<ResourceLoader> loaders, List<ClassLoader> parents) {
         super(null);
-        this.resourceLoader = resourceLoader;
+        this.loaders = loaders;
         this.parents = parents;
     }
 
@@ -76,17 +78,18 @@ public class PMLClassLoader extends SecureClassLoader implements Closeable {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        URL resourceUrl = findResource(name.replace('.', '/') + ".class");
-        if (resourceUrl == null) throw new ClassNotFoundException(name);
+        String path = name.replace('.', '/') + ".class";
+        Pair<ResourceLoader, URL> info = getResourceInfo(path);
+        if (info == null) throw new ClassNotFoundException(name);
         byte[] data;
-        try (InputStream stream = resourceUrl.openStream()) {
+        try (InputStream stream = info.getSecond().openStream()) {
             data = toByteArray(stream);
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);
         }
         CodeSource source;
         try {
-            source = createCodeSource(resourceLoader, name, name.replace('.', '/') + ".class", resourceUrl);
+            source = createCodeSource(info.getFirst(), name, path, info.getSecond());
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);
         }
@@ -148,11 +151,8 @@ public class PMLClassLoader extends SecureClassLoader implements Closeable {
 
     @Override
     protected URL findResource(String name) {
-        try {
-            return resourceLoader.loadResource(name);
-        } catch (IOException e) {
-            return null;
-        }
+        Pair<ResourceLoader, URL> info = getResourceInfo(name);
+        return info == null ? null : info.getSecond();
     }
 
     @Override
@@ -179,11 +179,29 @@ public class PMLClassLoader extends SecureClassLoader implements Closeable {
 
     @Override
     public void close() throws IOException {
-        resourceLoader.close();
+        for (ResourceLoader loader : loaders) {
+            loader.close();
+        }
     }
 
     public List<ClassLoader> getParents() {
         return parents;
+    }
+
+    protected Pair<ResourceLoader, URL> getResourceInfo(String name) {
+        for (ResourceLoader loader : loaders) {
+            try {
+                URL l = loader.loadResource(name);
+                if (l != null) return new Pair<>(loader, l);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public List<ResourceLoader> getLoaders() {
+        return loaders;
     }
 
     private static class ArrayEnumeration<T> implements Enumeration<T> {
