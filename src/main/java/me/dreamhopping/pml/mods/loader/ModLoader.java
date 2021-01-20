@@ -49,10 +49,9 @@ public class ModLoader {
             for (File file : modFiles) {
                 ResourceLoader loader = null;
                 boolean hasMods = false;
+                PMLClassLoader classLoader = null;
                 try {
                     loader = PMLLauncher.createResourceLoader(file);
-                    PMLClassLoader classLoader = null;
-
                     try {
                         URL resource = loader.loadResource("mods.json");
                         if (resource == null) {
@@ -100,6 +99,7 @@ public class ModLoader {
                     if (loader != null && !hasMods) {
                         try {
                             loader.close();
+                            if (classLoader != null) classLoader.getLoaders().remove(loader);
                         } catch (IOException e) {
                             System.err.println("Failed to close loader for " + file);
                             e.printStackTrace();
