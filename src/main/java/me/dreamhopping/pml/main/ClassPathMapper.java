@@ -25,6 +25,7 @@ public class ClassPathMapper {
         for (String s : entries) {
             if (s.startsWith(System.getProperty("java.home") + File.separator)) continue;
             File file = new File(s).getAbsoluteFile();
+            if (!file.exists()) continue;
 
             EntryType type = getEntryType(file, hashes, entryPoint);
             switch (type) {
