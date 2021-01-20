@@ -3,8 +3,8 @@ package me.dreamhopping.pml.main;
 import me.dreamhopping.pml.mods.loader.util.PMLClassLoader;
 import me.dreamhopping.pml.mods.loader.util.ResourceLoader;
 import me.dreamhopping.pml.mods.loader.util.impl.DirectoryResourceLoader;
-import me.dreamhopping.pml.mods.loader.util.impl.NoopResourceLoader;
 import me.dreamhopping.pml.mods.loader.util.impl.JarResourceLoader;
+import me.dreamhopping.pml.mods.loader.util.impl.NoopResourceLoader;
 import me.dreamhopping.pml.mods.loader.util.mc.TransformingClassLoader;
 
 import java.io.File;
@@ -56,7 +56,8 @@ public class PMLLauncher {
                 PMLLauncher.class.getName(),
                 ClassPathData.class.getName(),
                 ResourceLoader.class.getName(),
-                PMLClassLoader.class.getName()
+                PMLClassLoader.class.getName(),
+                TransformingClassLoader.class.getName()
         );
         return loader;
     }
