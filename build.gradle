@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.github.PufferfishModLoader:PufferfishGradle:f87ae05'
+        classpath 'com.github.PufferfishModLoader:PufferfishGradle:94d29b2'
     }
 }
 
